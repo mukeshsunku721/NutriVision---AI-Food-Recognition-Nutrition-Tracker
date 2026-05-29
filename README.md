@@ -67,7 +67,7 @@ Indian Food Nutrition (Batthula Vinay)
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/NutriVision-Food-Detection.git
+   git clone https://github.com/mukeshsunku721/NutriVision---AI-Food-Recognition-Nutrition-Tracker
    cd NutriVision-Food-Detection/flask_app
    ```
 2. **Install Dependencies**
@@ -92,9 +92,3 @@ Exporting logs to PDF for medical consultations.
 # 📝 License
 Distributed under the MIT License.
 
-### Why this README is good:
-1.  **Folder Mapping:** It explains your structure, which solves the "confusion" you had earlier.
-2.  **Tech Keywords:** It uses words like "Inference," "Fuzzy Matching," and "Heterogeneous Datasets," which makes you look like a pro.
-3.  **Visuals:** It uses emojis and code blocks to make it easy to read.
-
-**Note:** Don't forget to replace `YOUR_USERNAME` with your actual GitHub username in the text!
