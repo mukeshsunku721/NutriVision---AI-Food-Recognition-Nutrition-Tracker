@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard — NutriVision</title>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="navbar">
+  <span class="nav-brand">NutriVision</span>
+  <div class="nav-right">
+    <a href="/weekly" style="color:var(--muted);font-size:.82rem;text-decoration:none">Weekly Report</a>
+    <span id="nav-user"></span>
+    <span id="nav-date"></span>
+  </div>
+</nav>
+
+<div class="dashboard-grid">
+
+  <!-- ── LEFT: Upload & Detection ──────────────────────────────────────── -->
+  <section class="panel upload-panel">
+    <h2>Detect Food on Plate</h2>
+
+    <div class="upload-zone" id="upload-zone">
+      <div class="upload-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
+        </svg>
+      </div>
+      <p>Drop plate photo here or <label for="file-input" class="link-btn">browse</label></p>
+      <p class="hint">Works best with a clear overhead photo of the plate</p>
+      <input type="file" id="file-input" accept="image/*" hidden/>
+    </div>
+
+    <img id="preview-img" class="preview-img hidden" alt="Preview"/>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meal</label>
+        <select id="meal-select">
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch" selected>Lunch</option>
+          <option value="Dinner">Dinner</option>
+          <option value="Snack">Snack</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Qty per item (g)</label>
+        <input type="number" id="quantity" value="100" min="10" max="1000"/>
+      </div>
+    </div>
+
+    <button class="btn-primary btn-full" id="detect-btn" disabled>Detect Food Items</button>
+
+    <!-- Detection result -->
+    <div id="detection-result" class="detection-result hidden">
+
+      <!-- Annotated image with circles -->
+      <div class="annotated-wrap">
+        <img id="annotated-img" class="annotated-img" alt="Detection result"/>
+        <p class="annotated-caption" id="detect-caption"></p>
+      </div>
+
+      <!-- Per-item cards -->
+      <div id="item-cards" class="item-cards"></div>
+
+      <!-- Plate total -->
+      <div class="plate-total-box">
+        <div class="pt-title">Plate Total</div>
+        <div class="macro-grid">
+          <div class="macro-cell"><span class="macro-val" id="pt-cal"></span><span class="macro-label">kcal</span></div>
+          <div class="macro-cell"><span class="macro-val" id="pt-pro"></span><span class="macro-label">protein</span></div>
+          <div class="macro-cell"><span class="macro-val" id="pt-car"></span><span class="macro-label">carbs</span></div>
+          <div class="macro-cell"><span class="macro-val" id="pt-fat"></span><span class="macro-label">fat</span></div>
+          <div class="macro-cell"><span class="macro-val" id="pt-fib"></span><span class="macro-label">fiber</span></div>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-full" id="log-all-btn">Log All Items</button>
+    </div>
+  </section>
+
+  <!-- ── MIDDLE: Daily Summary ─────────────────────────────────────────── -->
+  <section class="panel tracker-panel">
+    <div class="tracker-header">
+      <h2>Today's Summary</h2>
+      <input type="date" id="date-picker"/>
+    </div>
+
+    <!-- Calorie ring -->
+    <div class="ring-container">
+      <svg viewBox="0 0 120 120" class="ring-svg">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="10"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)"
+          stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="314" stroke-dashoffset="314"
+          id="ring-arc" transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="ring-center">
+        <span id="ring-consumed">0</span>
+        <span class="ring-sub">of <span id="ring-target">--</span> kcal</span>
+      </div>
+    </div>
+
+    <!-- Macro bars -->
+    <div class="macro-bars">
+      <div class="mbar-row">
+        <span class="mbl">Protein</span>
+        <div class="bar-track"><div class="bar-fill bar-protein" id="bp"></div></div>
+        <span class="mbr" id="lp">--</span>
+      </div>
+      <div class="mbar-row">
+        <span class="mbl">Carbs</span>
+        <div class="bar-track"><div class="bar-fill bar-carbs" id="bc"></div></div>
+        <span class="mbr" id="lc">--</span>
+      </div>
+      <div class="mbar-row">
+        <span class="mbl">Fat</span>
+        <div class="bar-track"><div class="bar-fill bar-fat" id="bf"></div></div>
+        <span class="mbr" id="lf">--</span>
+      </div>
+      <div class="mbar-row">
+        <span class="mbl">Fiber</span>
+        <div class="bar-track"><div class="bar-fill bar-fiber" id="bfi"></div></div>
+        <span class="mbr" id="lfi">--</span>
+      </div>
+    </div>
+
+    <div id="advice-box" class="advice-box"></div>
+  </section>
+
+  <!-- ── RIGHT: Meal Log ───────────────────────────────────────────────── -->
+  <section class="panel log-panel">
+    <h2>Meal Log</h2>
+    <div id="meal-log"></div>
+  </section>
+
+</div>
+
+<script src="/static/js/dashboard.js"></script>
+
+</body>
+</html>

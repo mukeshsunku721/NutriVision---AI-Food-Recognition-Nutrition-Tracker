@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Weekly Report — NutriVision</title>
+  
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-body">
+
+<nav class="navbar">
+  <span class="nav-brand">NutriVision</span>
+  <div class="nav-right">
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <span id="nav-user"></span>
+  </div>
+</nav>
+
+<div class="report-layout">
+
+  <div class="report-header">
+    <h1>Weekly Report</h1>
+    <p id="report-range"></p>
+  </div>
+
+  <!-- Summary cards row -->
+  <div class="summary-cards" id="summary-cards"></div>
+
+  <!-- Charts row -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h2>Daily Calories</h2>
+      <canvas id="cal-chart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Macro breakdown</h2>
+      <canvas id="macro-chart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Calorie goal comparison -->
+  <div class="chart-card full-width">
+    <h2>Calories vs target</h2>
+    <canvas id="goal-chart" height="120"></canvas>
+  </div>
+
+</div>
+
+<style>
+.report-layout{max-width:1100px;margin:0 auto;padding:1.4rem;display:flex;flex-direction:column;gap:1.2rem}
+.report-header h1{font-size:1.6rem;margin-bottom:.2rem}
+.report-header p{color:var(--muted);font-size:.88rem}
+.summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rlg);
+  padding:1.2rem;text-align:center}
+.sum-card .sv{font-size:1.8rem;font-weight:700;display:block}
+.sum-card .sl{font-size:.78rem;color:var(--muted);margin-top:.3rem}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.chart-card{background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--rlg);padding:1.4rem}
+.chart-card.full-width{grid-column:1/-1}
+.nav-link{color:var(--muted);font-size:.85rem;text-decoration:none}
+.nav-link:hover{color:var(--text)}
+@media(max-width:700px){.summary-cards{grid-template-columns:1fr 1fr}.charts-row{grid-template-columns:1fr}}
+</style>
+
+<script>
+const userId = localStorage.getItem("userId");
+if (!userId) window.location.href = "/";
+document.getElementById("nav-user").textContent = localStorage.getItem("userName") || "";
+
+const CHART_COLORS = {
+  calories: "#6c63ff",
+  protein:  "#667eea",
+  carbs:    "#f6ad55",
+  fat:      "#fc8181",
+  fiber:    "#48bb78",
+  target:   "rgba(79,209,197,0.35)",
+};
+
+async function loadWeekly() {
+  const [weekRes, userRes] = await Promise.all([
+    fetch(`/api/users/${userId}/weekly`),
+    fetch(`/api/users/${userId}`),
+  ]);
+  const week = await weekRes.json();
+  const user = await userRes.json();
+
+  const target = user.daily_requirements.calories;
+  const days   = Object.keys(week.daily).sort();
+  const data   = days.map(d => week.daily[d]);
+
+  // Date range label
+  document.getElementById("report-range").textContent =
+    `${week.start} to ${week.end}`;
+
+  // Summary cards
+  const avgCal  = data.length ? Math.round(data.reduce((s,d)=>s+d.calories,0)/data.length) : 0;
+  const avgPro  = data.length ? Math.round(data.reduce((s,d)=>s+d.protein, 0)/data.length) : 0;
+  const totalMeals = data.reduce((s,_)=>s+1, 0);
+  const bestDay = data.reduce((best,d,i) => d.calories>0 && Math.abs(d.calories-target)<Math.abs((data[best]?.calories||9999)-target) ? i : best, 0);
+
+  document.getElementById("summary-cards").innerHTML = `
+    <div class="sum-card">
+      <span class="sv">${avgCal}</span>
+      <div class="sl">avg kcal / day</div>
+    </div>
+    <div class="sum-card">
+      <span class="sv">${avgPro}g</span>
+      <div class="sl">avg protein / day</div>
+    </div>
+    <div class="sum-card">
+      <span class="sv">${data.filter(d=>d.calories>0).length}</span>
+      <div class="sl">days tracked</div>
+    </div>
+    <div class="sum-card">
+      <span class="sv">${target}</span>
+      <div class="sl">daily calorie target</div>
+    </div>
+  `;
+
+  const labels = days.map(d => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString("en-IN", {weekday:"short", day:"numeric"});
+  });
+
+  const chartDefaults = {
+    responsive: true,
+    plugins: { legend: { labels: { color: "#8b90a8", font: { size: 12 } } } },
+    scales: {
+      x: { ticks: { color: "#8b90a8" }, grid: { color: "rgba(255,255,255,0.05)" } },
+      y: { ticks: { color: "#8b90a8" }, grid: { color: "rgba(255,255,255,0.05)" } },
+    },
+  };
+
+  // ── Calorie bar chart ──
+  new Chart(document.getElementById("cal-chart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Calories",
+        data: data.map(d => d.calories),
+        backgroundColor: CHART_COLORS.calories + "cc",
+        borderRadius: 6,
+      }]
+    },
+    options: { ...chartDefaults },
+  });
+
+  // ── Macro stacked bar chart ──
+  new Chart(document.getElementById("macro-chart"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Protein (g)",  data: data.map(d=>d.protein),  backgroundColor: CHART_COLORS.protein + "cc", borderRadius: 4 },
+        { label: "Carbs (g)",    data: data.map(d=>d.carbs),    backgroundColor: CHART_COLORS.carbs   + "cc", borderRadius: 4 },
+        { label: "Fat (g)",      data: data.map(d=>d.fat),      backgroundColor: CHART_COLORS.fat     + "cc", borderRadius: 4 },
+      ]
+    },
+    options: { ...chartDefaults, scales: { ...chartDefaults.scales, x: { ...chartDefaults.scales.x, stacked: true }, y: { ...chartDefaults.scales.y, stacked: true } } },
+  });
+
+  // ── Calories vs target line chart ──
+  new Chart(document.getElementById("goal-chart"), {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Actual calories",
+          data: data.map(d => d.calories),
+          borderColor: CHART_COLORS.calories,
+          backgroundColor: CHART_COLORS.calories + "22",
+          fill: true, tension: 0.35, pointRadius: 5,
+        },
+        {
+          label: `Target (${target} kcal)`,
+          data: days.map(() => target),
+          borderColor: CHART_COLORS.target,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+        }
+      ]
+    },
+    options: { ...chartDefaults },
+  });
+}
+
+loadWeekly();
+</script>
+</body>
+</html>

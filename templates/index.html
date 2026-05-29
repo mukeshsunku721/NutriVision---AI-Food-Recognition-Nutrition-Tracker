@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>NutriVision — Food Detection Tracker</title>
+
+  <link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-content">
+    <div class="logo-mark">NV</div>
+    <h1>NutriVision</h1>
+    <p class="subtitle">Point your camera at a plate — AI detects every food item and tracks your nutrition automatically.</p>
+
+    <div class="card onboarding-card">
+      <h2>Create your profile</h2>
+      <p class="card-sub">Used to calculate your personalised daily nutrition targets.</p>
+
+      <form id="onboarding-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Your name" required/>
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="age" min="10" max="100" placeholder="25" required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Height (cm)</label>
+            <input type="number" id="height" min="100" max="250" placeholder="170" required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" min="20" max="300" placeholder="70" required/>
+          </div>
+          <div class="form-group">
+            <label>Activity Level</label>
+            <select id="activity">
+              <option value="sedentary">Sedentary</option>
+              <option value="light">Light (1-3×/week)</option>
+              <option value="moderate" selected>Moderate (3-5×/week)</option>
+              <option value="active">Active (6-7×/week)</option>
+              <option value="very_active">Very Active</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Goal</label>
+          <div class="goal-pills">
+            <input type="radio" id="lose" name="goal" value="lose"/>
+            <label for="lose" class="pill">Lose Weight</label>
+            <input type="radio" id="maintain" name="goal" value="maintain" checked/>
+            <label for="maintain" class="pill">Maintain</label>
+            <input type="radio" id="gain" name="goal" value="gain"/>
+            <label for="gain" class="pill">Gain Muscle</label>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary btn-full">Calculate & Continue</button>
+      </form>
+
+      <div id="bmi-result" class="bmi-box hidden"></div>
+    </div>
+  </div>
+</div>
+<script src="/static/js/onboarding.js"></script>
+</body>
+</html>
