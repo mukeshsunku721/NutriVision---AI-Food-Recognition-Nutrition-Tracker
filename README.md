@@ -69,4 +69,31 @@ Indian Food Nutrition (Batthula Vinay)
    ```bash
    git clone https://github.com/YOUR_USERNAME/NutriVision-Food-Detection.git
    cd NutriVision-Food-Detection/flask_app
-
+   ```
+2. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+    ```
+3. **Run the Application**
+    ``` bash
+    python3 app.py
+    ```
+The app will be available at http://127.0.0.1:5000
+# 💡 Technical Implementation Details
+**Model:** YOLOv8-Nano Classification chosen for the best accuracy-to-speed ratio for web deployment.
+**Normalization:** Images are auto-resized to 224x224 pixels during inference.
+**Logic:** Implemented a robust "Fuzzy Search" algorithm in Python to handle naming variations between the AI model and the Nutrition CSV.
+# 🌟 Future Roadmap
+Implementation of **YOLOv8 Detection** for multi-item plate analysis.
+Volume estimation using depth sensing to calculate portion weight.
+Exporting logs to PDF for medical consultations.
+# 📝 License
+Distributed under the MIT License.
+    ``` bash
+    Why this README is good:
+    1.  **Folder Mapping:** It explains your structure, which solves the "confusion" you had earlier.
+    2.  **Tech Keywords:** It uses words like "Inference," "Fuzzy Matching," and "Heterogeneous Datasets," which makes you look like a pro.
+    3.  **Visuals:** It uses emojis and code blocks to make it easy to read.
+    
+    **Note:** Don't forget to replace `YOUR_USERNAME` with your actual GitHub username in the text!
+    ```
