@@ -53,6 +53,7 @@ Nutrivision Project/
     ├── nutrition_calculator.py # Math & CSV Lookup Logic
     ├── nutrition_db.json
     └── __init__.py
+```
 
 ## 📊 Dataset Information
 To solve the lack of diverse Indian food data, I engineered a custom dataset by merging and balancing four major Kaggle sources:
@@ -66,7 +67,33 @@ Indian Food Nutrition (Batthula Vinay)
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/NutriVision-Food-Detection.git
+   git clone https://github.com/mukeshsunku721/NutriVision---AI-Food-Recognition-Nutrition-Tracker
    cd NutriVision-Food-Detection/flask_app
+   ```
+2. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+    ```
+3. **Run the Application**
+    ``` bash
+    python3 app.py
+    ```
+The app will be available at http://127.0.0.1:5000
+# 💡 Technical Implementation Details
+**Model:** YOLOv8-Nano Classification chosen for the best accuracy-to-speed ratio for web deployment.
 
+**Normalization:** Images are auto-resized to 224x224 pixels during inference.
 
+**Logic:** Implemented a robust "Fuzzy Search" algorithm in Python to handle naming variations between the AI model and the Nutrition CSV.
+# 🌟 Future Roadmap
+Implementation of **YOLOv8 Detection** for multi-item plate analysis.
+Volume estimation using depth sensing to calculate portion weight.
+Exporting logs to PDF for medical consultations.
+# 📝 License
+Distributed under the MIT License.
+# Author
+Mukesh Sunku
+
+sunkumukesh@gmail.com
+
+https://www.linkedin.com/in/mukesh-sunku-721ms/
